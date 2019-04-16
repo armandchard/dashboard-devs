@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import * as firebase from "firebase";
+import AppVersionTable from "./Components/AppVersionTable/AppVersionTable";
 
 class App extends Component {
   constructor() {
@@ -34,27 +35,7 @@ class App extends Component {
       return (
         <div className="App">
           <header className="App-header">
-            <table>
-              <tr>
-                <th>App</th>
-                <th>Env</th>
-                <th>Version</th>
-              </tr>
-              {table.map(app => (
-                <tr key={app.appName}>
-                  <td>{app.appName}</td>
-                  <td colSpan="2">
-                    {app.environements.map(env => (
-                      <tr>
-                        <td>{env.name}</td>
-                        <td>{env.version}</td>
-                      </tr>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </table>
-            {/* <h1>{this.state.data["api-b2c"].preprod.version}</h1> */}
+            <AppVersionTable data={table} />
           </header>
         </div>
       );
