@@ -14,7 +14,7 @@ app.get("/deployments", (request: any, response: any) => {
 
 app.post("/deployments", (request: any, response: any) => {
   const { body } = request;
-  console.log(body);
+
   return admin
     .database()
     .ref(`deployments/${body.app}/${body.env}`)
@@ -28,6 +28,7 @@ app.post("/deployments", (request: any, response: any) => {
 
 app.post("/version", (request: any, response: any) => {
   const { body } = request;
+
   return admin
     .database()
     .ref("version")
@@ -35,6 +36,21 @@ app.post("/version", (request: any, response: any) => {
     .then(() => {
       response.status(200).send(`OK ${body.version}`);
     });
+});
+
+app.post("/webhooks", async (request: any, response: any) => {
+  const { body } = request;
+
+  const dbUpdate = await admin
+    .database()
+    .ref("repositories")
+    .child(`${body.repository.name}/pull_requests/${body.pullrequest.id}`)
+    .set({
+      repository: { ...body.repository },
+      actor: { ...body.actor },
+      ...body.pullrequest
+    });
+  response.status(200).send(`OK ${dbUpdate}`);
 });
 
 exports.app = functions.https.onRequest(app);

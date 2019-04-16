@@ -19,6 +19,10 @@
       {
         "source": "/deployments",
         "function": "app"
+      },
+      {
+        "source": "/webhooks",
+        "function": "app"
       }
     ]
   }
