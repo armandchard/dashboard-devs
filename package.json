@@ -14,7 +14,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:deploy": "yarn build && firebase deploy",
+    "build:deploy:app": "yarn build && firebase deploy --only hosting",
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions"
   },
   "eslintConfig": {
     "extends": "react-app"
