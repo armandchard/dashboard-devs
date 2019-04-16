@@ -3,6 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import * as firebase from "firebase";
 import AppVersionTable from "./Components/AppVersionTable/AppVersionTable";
+const { version: appVersion } = require("../package.json");
 
 class App extends Component {
   constructor() {
@@ -14,6 +15,8 @@ class App extends Component {
 
   componentDidMount() {
     const speedRef = firebase.database().ref("deployments");
+    const versionRef = firebase.database().ref("version");
+
     speedRef.on("value", snap => {
       const values = snap.val();
       const map = Object.keys(values).map(key => {
@@ -26,6 +29,14 @@ class App extends Component {
       this.setState({
         data: map
       });
+    });
+
+    versionRef.on("value", snap => {
+      const version = snap.val();
+      if (version !== appVersion) {
+        // eslint-disable-next-line no-restricted-globals
+        location.reload(true);
+      }
     });
   }
 

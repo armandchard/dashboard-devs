@@ -13,7 +13,7 @@ app.get("/deployments", (request: any, response: any) => {
 });
 
 app.post("/deployments", (request: any, response: any) => {
-  const body = request.body;
+  const { body } = request;
   console.log(body);
   return admin
     .database()
@@ -23,6 +23,17 @@ app.post("/deployments", (request: any, response: any) => {
     })
     .then(() => {
       response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
+    });
+});
+
+app.post("/version", (request: any, response: any) => {
+  const { body } = request;
+  return admin
+    .database()
+    .ref("version")
+    .set(body.version)
+    .then(() => {
+      response.status(200).send(`OK ${body.version}`);
     });
 });
 

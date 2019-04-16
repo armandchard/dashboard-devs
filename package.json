@@ -1,10 +1,11 @@
 {
   "name": "dash-app",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
+    "axios": "^0.18.0",
     "firebase": "^5.9.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -15,9 +16,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:deploy": "yarn build && firebase deploy",
-    "build:deploy:app": "yarn build && firebase deploy --only hosting",
-    "deploy": "firebase deploy",
+    "build:deploy": "yarn build && firebase deploy && node update-version.js",
+    "build:deploy:app": "yarn build && firebase deploy --only hosting && node update-version.js",
+    "deploy": "firebase deploy && node update-version.js",
     "deploy:functions": "firebase deploy --only functions"
   },
   "eslintConfig": {
