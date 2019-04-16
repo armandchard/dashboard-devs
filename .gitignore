@@ -5,8 +5,9 @@
 /.pnp
 .pnp.js
 
-# firebase
-/.firebase
+
+# Firebase cache
+.firebase/
 firebase-debug.log
 
 # testing

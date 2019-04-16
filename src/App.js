@@ -3,21 +3,24 @@ import logo from "./logo.svg";
 import "./App.css";
 import * as firebase from "firebase";
 import AppVersionTable from "./Components/AppVersionTable/AppVersionTable";
+import AppInfos from "./Components/AppInfos/AppInfos";
 const { version: appVersion } = require("../package.json");
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      data: []
+      data: [],
+      repos: []
     };
   }
 
   componentDidMount() {
-    const speedRef = firebase.database().ref("deployments");
+    const reposRef = firebase.database().ref("repositories");
+    const deploymentsRef = firebase.database().ref("deployments");
     const versionRef = firebase.database().ref("version");
 
-    speedRef.on("value", snap => {
+    deploymentsRef.on("value", snap => {
       const values = snap.val();
       const map = Object.keys(values).map(key => {
         const environements = Object.keys(values[key]).map(environement => ({
@@ -27,7 +30,26 @@ class App extends Component {
         return { appName: key, environements };
       });
       this.setState({
+        ...this.state,
         data: map
+      });
+    });
+
+    reposRef.on("value", snap => {
+      const values = snap.val();
+      const map = Object.keys(values).map(key => {
+        let prs = [];
+        const val = Object.values(values[key].pull_requests);
+        prs.push(...val);
+        return {
+          name: key,
+          pullRequests: prs
+        };
+      });
+      console.log({ map });
+      this.setState({
+        ...this.state,
+        repos: map
       });
     });
 
@@ -41,13 +63,18 @@ class App extends Component {
   }
 
   render() {
-    const table = this.state.data;
+    const { data: table, repos } = this.state;
     if (table && table.length > 0) {
       return (
         <div className="App">
           <header className="App-header">
             <AppVersionTable data={table} />
           </header>
+          <div className="App-body">
+            {repos.map(repo =>
+              repo ? <AppInfos key={repo.name} values={repo} /> : null
+            )}
+          </div>
         </div>
       );
     }
