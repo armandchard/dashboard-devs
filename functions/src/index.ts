@@ -40,17 +40,25 @@ app.post("/version", (request: any, response: any) => {
 
 app.post("/webhooks", async (request: any, response: any) => {
   const { body } = request;
-
-  const dbUpdate = await admin
+  const repoRef = admin
     .database()
     .ref("repositories")
-    .child(`${body.repository.name}/pull_requests/${body.pullrequest.id}`)
-    .set({
+    .child(`${body.repository.name}/pull_requests/${body.pullrequest.id}`);
+
+  if (
+    body.pullrequest.state === "CLOSED" ||
+    body.pullrequest.state === "MERGED"
+  ) {
+    const dbRemove = await repoRef.remove();
+    response.status(200).send(`OK ${dbRemove}`);
+  } else {
+    const dbUpdate = await repoRef.set({
       repository: { ...body.repository },
       actor: { ...body.actor },
       ...body.pullrequest
     });
-  response.status(200).send(`OK ${dbUpdate}`);
+    response.status(200).send(`OK ${dbUpdate}`);
+  }
 });
 
 exports.app = functions.https.onRequest(app);

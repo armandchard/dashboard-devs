@@ -10,6 +10,7 @@ import Collapse from "@material-ui/core/Collapse";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
+import Reviewer from "./Reviewer";
 
 const styles = theme => ({
   root: {
@@ -22,21 +23,19 @@ const styles = theme => ({
   nested: {
     paddingLeft: theme.spacing.unit * 4
   },
+  reviewer: {
+    display: "inline-block",
+    position: "relative",
+    height: "28px",
+    width: "28px"
+  },
   avatar: {
-    height: "24px",
-    width: "24px"
+    height: "28px",
+    width: "28px"
   }
 });
 
 class NestedList extends React.Component {
-  state = {
-    open: true
-  };
-
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
-
   render() {
     const { classes, values } = this.props;
 
@@ -72,16 +71,15 @@ class NestedList extends React.Component {
                       </span>
                     }
                   />
-                  {pr.participants.map(reviewer => (
-                    //   <ListItemIcon key={reviewer.user.account_id}>
-                    <Avatar
-                      key={reviewer.user.account_id}
-                      alt={reviewer.user.display_name}
-                      src={reviewer.user.links.avatar.href}
-                      className={classes.avatar}
-                    />
-                    //   </ListItemIcon>
-                  ))}
+                  {pr.participants
+                    .sort(r => r.approved)
+                    .slice(0, 2)
+                    .map(reviewer => (
+                      <Reviewer
+                        key={reviewer.user.account_id}
+                        reviewer={reviewer}
+                      />
+                    ))}
                 </ListItem>
               ))}
             </List>
