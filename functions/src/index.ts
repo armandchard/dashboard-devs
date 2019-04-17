@@ -46,7 +46,7 @@ app.post("/webhooks", async (request: any, response: any) => {
     .child(`${body.repository.name}/pull_requests/${body.pullrequest.id}`);
 
   if (
-    body.pullrequest.state === "CLOSED" ||
+    body.pullrequest.state === "DECLINED" ||
     body.pullrequest.state === "MERGED"
   ) {
     const dbRemove = await repoRef.remove();

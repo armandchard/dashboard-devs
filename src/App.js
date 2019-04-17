@@ -68,12 +68,15 @@ class App extends Component {
       return (
         <div className="App">
           <header className="App-header">
-            <AppVersionTable data={table} />
+            <h1>Dashboard Devs Pumpkin</h1>
           </header>
           <div className="App-body">
-            {repos.map(repo =>
-              repo ? <AppInfos key={repo.name} values={repo} /> : null
-            )}
+            <AppVersionTable data={table} />
+            <div className="App-prs">
+              {repos.map(repo =>
+                repo ? <AppInfos key={repo.name} values={repo} /> : null
+              )}
+            </div>
           </div>
         </div>
       );
