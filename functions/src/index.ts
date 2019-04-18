@@ -40,25 +40,52 @@ app.post("/version", (request: any, response: any) => {
 
 app.post("/webhooks", async (request: any, response: any) => {
   const { body } = request;
-  const repoRef = admin
-    .database()
-    .ref("repositories")
-    .child(`${body.repository.name}/pull_requests/${body.pullrequest.id}`);
+  const repoRef = admin.database().ref(`repositories/${body.repository.name}`);
+
+  if (body.pullrequest) {
+    const updatePR = await updatePullRequest(body, repoRef);
+    response.status(200).send(`OK ${updatePR}`);
+  }
+  if (body.push) {
+    const updateBr = await updateBranch(body, repoRef);
+    response.status(200).send(`OK ${updateBr}`);
+  }
+});
+
+async function updateBranch(body: any, ref: any) {
+  const update = body.push.changes[0];
+  const branch = update.new || update.old;
+  const branchName = branch.name.split("/").pop();
+  const branchRef = ref.child(`branches/${branchName}`);
+
+  if (branch.type !== "branch") {
+    return new Promise(resolve => resolve(branch));
+  }
+
+  if (update.closed || update.new === null) {
+    return branchRef.remove();
+  } else {
+    return branchRef.set({
+      name: branch.name
+    });
+  }
+}
+
+async function updatePullRequest(body: any, ref: any) {
+  const prRef = ref.child(`pull_requests/${body.pullrequest.id}`);
 
   if (
     body.pullrequest.state === "DECLINED" ||
     body.pullrequest.state === "MERGED"
   ) {
-    const dbRemove = await repoRef.remove();
-    response.status(200).send(`OK ${dbRemove}`);
+    return prRef.remove();
   } else {
-    const dbUpdate = await repoRef.set({
+    return prRef.set({
       repository: { ...body.repository },
       actor: { ...body.actor },
       ...body.pullrequest
     });
-    response.status(200).send(`OK ${dbUpdate}`);
   }
-});
+}
 
 exports.app = functions.https.onRequest(app);

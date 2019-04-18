@@ -38,11 +38,19 @@ class App extends Component {
       const values = snap.val();
       const map = Object.keys(values).map(key => {
         let prs = [];
-        const val = Object.values(values[key].pull_requests);
-        prs.push(...val);
+        let branches = [];
+        if (values[key].pull_requests) {
+          const val = Object.values(values[key].pull_requests);
+          prs.push(...val);
+        }
+        if (values[key].branches) {
+          const branch = Object.values(values[key].branches);
+          branches.push(...branch);
+        }
         return {
           name: key,
-          pullRequests: prs
+          pullRequests: prs,
+          branches
         };
       });
       this.setState({
