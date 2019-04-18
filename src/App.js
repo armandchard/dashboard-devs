@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import * as firebase from "firebase";
-import AppVersionTable from "./Components/AppVersionTable/AppVersionTable";
 import AppInfos from "./Components/AppInfos/AppInfos";
 const { version: appVersion } = require("../package.json");
 
@@ -10,7 +9,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      data: [],
+      apps: [],
       repos: []
     };
   }
@@ -31,7 +30,7 @@ class App extends Component {
       });
       this.setState({
         ...this.state,
-        data: map
+        apps: map
       });
     });
 
@@ -46,7 +45,6 @@ class App extends Component {
           pullRequests: prs
         };
       });
-      console.log({ map });
       this.setState({
         ...this.state,
         repos: map
@@ -63,20 +61,32 @@ class App extends Component {
   }
 
   render() {
-    const { data: table, repos } = this.state;
-    if (table && table.length > 0) {
+    const { apps: data, repos } = this.state;
+    const apps = data.map(app => {
+      const repo = repos.find(repo => repo.name === app.appName);
+      return { ...app, ...repo };
+    });
+
+    if (apps && apps.length > 0) {
       return (
         <div className="App">
           <header className="App-header">
             <h1>Dashboard Devs Pumpkin</h1>
           </header>
           <div className="App-body">
-            <AppVersionTable data={table} />
-            <div className="App-prs">
-              {repos.map(repo =>
-                repo ? <AppInfos key={repo.name} values={repo} /> : null
-              )}
-            </div>
+            {apps && apps.length
+              ? apps
+                  .sort((a, b) =>
+                    a.pullRequests
+                      ? a.pullRequests.length
+                      : 0 - b.pullRequests
+                      ? b.pullRequests.length
+                      : 0
+                  )
+                  .map(app =>
+                    app ? <AppInfos key={app.appName} app={app} /> : null
+                  )
+              : null}
           </div>
         </div>
       );

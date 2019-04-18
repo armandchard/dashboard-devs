@@ -26,19 +26,11 @@
   display: flex;
   flex: 1;
   align-items: flex-start;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   background-color: #282c34;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-prs {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-around;
 }
 
 .App-link {
