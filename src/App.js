@@ -3,42 +3,27 @@ import logo from "./logo.svg";
 import "./App.css";
 import * as firebase from "firebase";
 import AppInfos from "./Components/AppInfos/AppInfos";
+import PropTypes from "prop-types";
 const { version: appVersion } = require("../package.json");
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      apps: [],
       repos: []
     };
   }
 
   componentDidMount() {
     const reposRef = firebase.database().ref("repositories");
-    const deploymentsRef = firebase.database().ref("deployments");
     const versionRef = firebase.database().ref("version");
-
-    deploymentsRef.on("value", snap => {
-      const values = snap.val();
-      const map = Object.keys(values).map(key => {
-        const environements = Object.keys(values[key]).map(environement => ({
-          name: environement,
-          version: values[key][environement].version
-        }));
-        return { appName: key, environements };
-      });
-      this.setState({
-        ...this.state,
-        apps: map
-      });
-    });
 
     reposRef.on("value", snap => {
       const values = snap.val();
       const map = Object.keys(values).map(key => {
         let prs = [];
         let branches = [];
+        let envs = [];
         if (values[key].pull_requests) {
           const val = Object.values(values[key].pull_requests);
           prs.push(...val);
@@ -47,14 +32,23 @@ class App extends Component {
           const branch = Object.values(values[key].branches);
           branches.push(...branch);
         }
+        if (values[key].environments) {
+          const environements = Object.keys(values[key].environments).map(
+            environment => ({
+              name: environment,
+              version: values[key].environments[environment].version
+            })
+          );
+          envs.push(...environements);
+        }
         return {
           name: key,
           pullRequests: prs,
-          branches
+          branches,
+          envs
         };
       });
       this.setState({
-        ...this.state,
         repos: map
       });
     });
@@ -69,30 +63,20 @@ class App extends Component {
   }
 
   render() {
-    const { apps: data, repos } = this.state;
-    const apps = data.map(app => {
-      const repo = repos.find(repo => repo.name === app.appName);
-      return { ...app, ...repo };
-    });
+    const { repos } = this.state;
 
-    if (apps && apps.length > 0) {
+    if (repos && repos.length > 0) {
       return (
         <div className="App">
           <header className="App-header">
             <h1>Dashboard Devs Pumpkin</h1>
           </header>
           <div className="App-body">
-            {apps && apps.length
-              ? apps
-                  .sort((a, b) =>
-                    a.pullRequests
-                      ? a.pullRequests.length
-                      : 0 - b.pullRequests
-                      ? b.pullRequests.length
-                      : 0
-                  )
-                  .map(app =>
-                    app ? <AppInfos key={app.appName} app={app} /> : null
+            {repos && repos.length
+              ? repos
+                  .sort((a, b) => b.pullRequests.length - a.pullRequests.length)
+                  .map(repo =>
+                    repo ? <AppInfos key={repo.name} app={repo} /> : null
                   )
               : null}
           </div>
@@ -108,5 +92,9 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  repos: PropTypes.arrayOf(PropTypes.object)
+};
 
 export default App;

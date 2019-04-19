@@ -11,20 +11,20 @@ const styles = theme => ({
     width: "100%",
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
-    marginTop: theme.spacing.unit * 3,
+    margin: "5px",
     overflowX: "auto"
   }
 });
 
-class NestedList extends React.Component {
+class AppInfos extends React.Component {
   render() {
     const { classes, app } = this.props;
 
     return (
       <Card className={classes.root}>
-        <CardHeader title={app.appName} />
+        <CardHeader title={app.name} />
         <List>
-          <AppVersions app={app} />
+          <AppVersions envs={app.envs} />
           <AppBranches branches={app.branches} />
           {!!app.pullRequests && app.pullRequests.length > 0 ? (
             <PullRequests pullRequests={app.pullRequests} />
@@ -35,9 +35,9 @@ class NestedList extends React.Component {
   }
 }
 
-NestedList.propTypes = {
+AppInfos.propTypes = {
   classes: PropTypes.object.isRequired,
   app: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(NestedList);
+export default withStyles(styles)(AppInfos);

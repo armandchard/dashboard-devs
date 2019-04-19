@@ -4,12 +4,12 @@ import { ListItem, ListItemText } from "@material-ui/core";
 
 class AppVersions extends React.Component {
   render() {
-    const { app } = this.props;
+    const { envs } = this.props;
 
     return (
       <ListItem>
-        {!!app
-          ? app.environements.map(env => (
+        {!!envs
+          ? envs.map(env => (
               <ListItemText
                 key={env.name}
                 primary={env.name}
@@ -23,7 +23,7 @@ class AppVersions extends React.Component {
 }
 
 AppVersions.propTypes = {
-  app: PropTypes.object.isRequired
+  envs: PropTypes.array.isRequired
 };
 
 export default AppVersions;

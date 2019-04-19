@@ -15,15 +15,18 @@ app.get("/deployments", (request: any, response: any) => {
 app.post("/deployments", (request: any, response: any) => {
   const { body } = request;
 
-  return admin
-    .database()
-    .ref(`deployments/${body.app}/${body.env}`)
-    .set({
-      version: body.version
-    })
-    .then(() => {
-      response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
-    });
+  return (
+    admin
+      .database()
+      .ref(`repositories/${body.app}/environments/${body.env}`)
+      // .ref(`deployments/${body.app}/${body.env}`)
+      .set({
+        version: body.version
+      })
+      .then(() => {
+        response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
+      })
+  );
 });
 
 app.post("/version", (request: any, response: any) => {
