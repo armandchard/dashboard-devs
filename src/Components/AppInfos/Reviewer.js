@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
+import Badge from "@material-ui/core/Badge";
+import { AssignmentTurnedIn } from "@material-ui/icons";
 
 const styles = theme => ({
   root: {
@@ -50,17 +51,22 @@ class Reviewer extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Avatar
+        <Badge badgeContent={reviewer}>
+          <AssignmentTurnedIn />
+        </Badge>
+        {/* <Avatar
           key={reviewer.user.account_id}
           alt={reviewer.user.display_name}
           src={reviewer.user.links.avatar.href}
           className={classes.avatar}
         />
-        <span className={classes.approved}>
-          <span className={classes.approvedIconOuter}>
-            <span className={classes.approvedIconInner} />
+        {reviewer.approved ? (
+          <span className={classes.approved}>
+            <span className={classes.approvedIconOuter}>
+              <span className={classes.approvedIconInner} />
+            </span>
           </span>
-        </span>
+        ) : null} */}
       </div>
     );
   }

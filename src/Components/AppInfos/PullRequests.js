@@ -2,15 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import Reviewer from "./Reviewer";
+import AssignmentTurnedInOutlined from "@material-ui/icons/AssignmentTurnedInOutlined";
 import {
   Avatar,
   Collapse,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Badge,
+  Tooltip
 } from "@material-ui/core";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const styles = theme => ({
   nested: {
@@ -19,52 +22,103 @@ const styles = theme => ({
   avatar: {
     height: "28px",
     width: "28px"
+  },
+  margin: {
+    margin: theme.spacing.unit * 2,
+    color: "rgba(0, 0, 0, 0.54)"
+  },
+  textColor: {
+    color: "rgba(0, 0, 0, 0.54)"
   }
 });
 
 class PullRequests extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: true
+    };
+    this.onPrClick = this.onPrClick.bind(this);
+  }
+
+  handleClick = () => {
+    this.setState(state => ({ open: !state.open }));
+  };
+
+  onPrClick = pr => {
+    window.open(pr.links.html.href, "_blank");
+  };
+
   render() {
     const { classes, pullRequests } = this.props;
 
     return (
       <div>
-        <ListItem>
+        <ListItem button onClick={this.handleClick}>
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
           <ListItemText
+            inset
             primary={<span>{pullRequests.length} Pull Requests</span>}
           />
+          {this.state.open ? (
+            <ExpandLess className={classes.textColor} />
+          ) : (
+            <ExpandMore className={classes.textColor} />
+          )}
         </ListItem>
-        <Collapse in={!!pullRequests} timeout="auto" unmountOnExit>
+        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {pullRequests.map(pr => (
-              <ListItem key={pr.id} className={classes.nested}>
-                <Avatar
-                  alt={pr.author.display_name}
-                  src={pr.author.links.avatar.href}
-                  className={classes.avatar}
-                />
-                <ListItemText
-                  inset
-                  primary={pr.title}
-                  secondary={
-                    <span>
-                      {pr.source.branch.name} -> {pr.destination.branch.name}
-                    </span>
-                  }
-                />
-                {pr.participants
-                  .sort(r => r.approved)
-                  .slice(0, 2)
-                  .map(reviewer => (
-                    <Reviewer
-                      key={reviewer.user.account_id}
-                      reviewer={reviewer}
+            {pullRequests.map(pr => {
+              const approveCount = pr.participants.filter(p => p.approved)
+                .length;
+              return (
+                <ListItem
+                  key={pr.id}
+                  className={classes.nested}
+                  button
+                  onClick={() => this.onPrClick(pr)}
+                >
+                  <Tooltip title={pr.author.display_name}>
+                    <Avatar
+                      alt={pr.author.display_name}
+                      src={pr.author.links.avatar.href}
+                      className={classes.avatar}
                     />
-                  ))}
-              </ListItem>
-            ))}
+                  </Tooltip>
+                  <ListItemText
+                    inset
+                    primary={pr.title}
+                    secondary={
+                      <span>
+                        {pr.source.branch.name} -> {pr.destination.branch.name}
+                      </span>
+                    }
+                  />
+                  {approveCount > 0 ? (
+                    <Tooltip
+                      title={
+                        <span>
+                          {`${approveCount}
+                          ${approveCount > 1 ? "approves" : "approve"}`}
+                        </span>
+                      }
+                    >
+                      <Badge
+                        className={classes.margin}
+                        badgeContent={
+                          pr.participants.filter(p => p.approved).length
+                        }
+                        color="secondary"
+                      >
+                        <AssignmentTurnedInOutlined />
+                      </Badge>
+                    </Tooltip>
+                  ) : null}
+                </ListItem>
+              );
+            })}
           </List>
         </Collapse>
       </div>

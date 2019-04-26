@@ -4,7 +4,27 @@ import "./App.css";
 import * as firebase from "firebase";
 import AppInfos from "./Components/AppInfos/AppInfos";
 import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+
 const { version: appVersion } = require("../package.json");
+
+const styles = {
+  root: {
+    flexGrow: 1
+  },
+  grow: {
+    flexGrow: 1
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20
+  }
+};
 
 class App extends Component {
   constructor() {
@@ -64,13 +84,23 @@ class App extends Component {
 
   render() {
     const { repos } = this.state;
+    const { classes } = this.props;
 
     if (repos && repos.length > 0) {
       return (
         <div className="App">
-          <header className="App-header">
-            <h1>Dashboard Devs Pumpkin</h1>
-          </header>
+          <AppBar position="static" color="primary">
+            <Toolbar>
+              {/* <IconButton
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="Menu"
+              >
+                <MenuIcon />
+              </IconButton> */}
+              <h1 className={classes.grow}>Dashboard Devs Pumpkin</h1>
+            </Toolbar>
+          </AppBar>
           <div className="App-body">
             {repos && repos.length
               ? repos
@@ -97,4 +127,4 @@ App.propTypes = {
   repos: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default App;
+export default withStyles(styles)(App);
