@@ -73,13 +73,16 @@ async function updateBranch(body: any, ref: any) {
 
 async function updatePullRequest(body: any, ref: any) {
   const prRef = ref.child(`pull_requests/${body.pullrequest.id}`);
-
+  const logoRef = ref.child("logo");
   if (
     body.pullrequest.state === "DECLINED" ||
     body.pullrequest.state === "MERGED"
   ) {
     return prRef.remove();
   } else {
+    logoRef.set({
+      href: body.pullrequest.source.repository.links.avatar.href
+    });
     return prRef.set({
       repository: { ...body.repository },
       actor: { ...body.actor },

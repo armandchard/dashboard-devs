@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { Card, CardHeader, List } from "@material-ui/core";
+import { Card, CardHeader, List, Avatar } from "@material-ui/core";
 import PullRequests from "./PullRequests";
 import AppVersions from "./AppVersions";
 import AppBranches from "./AppBranches";
@@ -60,21 +60,37 @@ class AppInfos extends React.Component {
   }
 
   render() {
-    const { classes, app } = this.props;
+    const {
+      classes,
+      app: { name, envs, branches, logo, pullRequests }
+    } = this.props;
 
-    const pullRequests = app.pullRequests
-      ? app.pullRequests.filter(pr => !pr.title.startsWith("[WIP]"))
+    const prs = pullRequests
+      ? pullRequests.filter(pr => !pr.title.startsWith("[WIP]"))
       : [];
 
     return (
       <Card className={classes.root}>
-        <CardHeader title={app.name} className={classes.title} />
+        <CardHeader
+          title={name}
+          className={classes.title}
+          avatar={
+            <Avatar
+              aria-label={name}
+              src={
+                logo
+                  ? logo.href
+                  : prs.length > 0
+                  ? prs[0].source.repository.links.avatar.href
+                  : ""
+              }
+            />
+          }
+        />
         <List>
-          <AppVersions envs={app.envs} />
-          <AppBranches branches={app.branches} />
-          {!!pullRequests && pullRequests.length > 0 ? (
-            <PullRequests pullRequests={pullRequests} />
-          ) : null}
+          <AppVersions envs={envs} />
+          <AppBranches branches={branches} />
+          {!!prs && prs.length > 0 ? <PullRequests pullRequests={prs} /> : null}
         </List>
       </Card>
     );

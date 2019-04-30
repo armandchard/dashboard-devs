@@ -38,6 +38,7 @@ class App extends Component {
 
     reposRef.on("value", snap => {
       const values = snap.val();
+
       const map = Object.keys(values).map(key => {
         let prs = [];
         let branches = [];
@@ -63,7 +64,8 @@ class App extends Component {
           name: key,
           pullRequests: prs,
           branches,
-          envs
+          envs,
+          logo: values[key].logo
         };
       });
       this.setState({
