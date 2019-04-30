@@ -13,21 +13,67 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
     margin: "5px",
     overflowX: "auto"
+  },
+  title: {
+    color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
   }
 });
 
+export const colorsDefinition = {
+  "#20d0b0": "#EE38AA", // tealish
+  "#ff80a1": "#11C0D8", // carnation-pink
+  "#ee38aa": "#11C0D8", // medium-pink
+  "#f5557a": "#11C0D8", // warm-pink
+  "#11c0d8": "#EE38AA", // turquoise-blue
+  "#8ca0b3": "#EE38AA", // bluey-gray
+  "#adbac5": "#EE38AA", // bluey-gray-two
+  "#bbcad2": "#EE38AA", // cloudy-blue
+  "#11C0D8": "#EE38AA", // light-blue-gray
+  "#EE38AA": "#11C0D8" // gray 300
+};
+
 class AppInfos extends React.Component {
+  transform(value) {
+    const { getHashCode } = this;
+    if (value) {
+      const colors = Object.keys(colorsDefinition);
+      const hash = getHashCode(value);
+      const halfLength = value.length / 2;
+      const charAt = halfLength < hash.length ? halfLength : 0;
+      const index = parseInt(hash.charAt(charAt), 10);
+      let color = colors[index - 1 || 0];
+      if (!color) {
+        color = "#bbcad2";
+      }
+      return color;
+    } else {
+      return "#bbcad2";
+    }
+  }
+
+  getHashCode(str) {
+    let hash = 1;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash.toString();
+  }
+
   render() {
     const { classes, app } = this.props;
 
+    const pullRequests = app.pullRequests
+      ? app.pullRequests.filter(pr => !pr.title.startsWith("[WIP]"))
+      : [];
+
     return (
       <Card className={classes.root}>
-        <CardHeader title={app.name} />
+        <CardHeader title={app.name} className={classes.title} />
         <List>
           <AppVersions envs={app.envs} />
           <AppBranches branches={app.branches} />
-          {!!app.pullRequests && app.pullRequests.length > 0 ? (
-            <PullRequests pullRequests={app.pullRequests} />
+          {!!pullRequests && pullRequests.length > 0 ? (
+            <PullRequests pullRequests={pullRequests} />
           ) : null}
         </List>
       </Card>

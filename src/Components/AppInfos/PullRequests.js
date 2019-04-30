@@ -71,8 +71,9 @@ class PullRequests extends React.Component {
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {pullRequests.map(pr => {
-              const approveCount = pr.participants.filter(p => p.approved)
-                .length;
+              const approveCount = pr.participants
+                ? pr.participants.filter(p => p.approved).length
+                : 0;
               return (
                 <ListItem
                   key={pr.id}
@@ -108,7 +109,9 @@ class PullRequests extends React.Component {
                       <Badge
                         className={classes.margin}
                         badgeContent={
-                          pr.participants.filter(p => p.approved).length
+                          pr.participants
+                            ? pr.participants.filter(p => p.approved).length
+                            : 0
                         }
                         color="secondary"
                       >
