@@ -14,6 +14,9 @@ const styles = theme => ({
     margin: "5px",
     overflowX: "auto"
   },
+  link: {
+    textDecoration: "none"
+  },
   title: {
     color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
   }
@@ -62,7 +65,7 @@ class AppInfos extends React.Component {
   render() {
     const {
       classes,
-      app: { name, envs, branches, logo, pullRequests }
+      app: { name, envs, branches, logo, pullRequests, url }
     } = this.props;
 
     const prs = pullRequests
@@ -72,7 +75,16 @@ class AppInfos extends React.Component {
     return (
       <Card className={classes.root}>
         <CardHeader
-          title={name}
+          title={
+            url ? (
+              // eslint-disable-next-line react/jsx-no-target-blank
+              <a href={url.href} target="_blank" className={classes.link}>
+                {name}
+              </a>
+            ) : (
+              name
+            )
+          }
           className={classes.title}
           avatar={
             <Avatar

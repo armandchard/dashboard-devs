@@ -65,7 +65,8 @@ class App extends Component {
           pullRequests: prs,
           branches,
           envs,
-          logo: values[key].logo
+          logo: values[key].logo,
+          url: values[key].url
         };
       });
       this.setState({
