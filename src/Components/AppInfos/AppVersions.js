@@ -1,19 +1,56 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 import { ListItem, ListItemText } from "@material-ui/core";
+import moment from "moment";
+
+const styles = theme => ({
+  flex: {
+    display: "flex"
+  }
+});
+
+// Can customize display from now
+// moment.updateLocale("en", {
+//   relativeTime: {
+//     future: "in %s",
+//     past: "%s ago",
+//     s: "a few seconds",
+//     ss: "%d seconds",
+//     m: "a minute",
+//     mm: "%d minutes",
+//     h: "an hour",
+//     hh: "%d hours",
+//     d: "a day",
+//     dd: "%d days",
+//     M: "a month",
+//     MM: "%d months",
+//     y: "a year",
+//     yy: "%d years"
+//   }
+// });
 
 class AppVersions extends React.Component {
   render() {
-    const { envs } = this.props;
+    const { envs, classes } = this.props;
 
     return (
       <ListItem>
         {!!envs
-          ? envs.map(env => (
+          ? envs.map(({ name, version, timestamp }) => (
               <ListItemText
-                key={env.name}
-                primary={env.name}
-                secondary={env.version}
+                key={name}
+                primary={name}
+                secondary={
+                  <span>
+                    {version}
+                    {timestamp ? (
+                      <span className={classes.flex}>
+                        {moment(timestamp).fromNow(true)}
+                      </span>
+                    ) : null}
+                  </span>
+                }
               />
             ))
           : null}
@@ -26,4 +63,4 @@ AppVersions.propTypes = {
   envs: PropTypes.array.isRequired
 };
 
-export default AppVersions;
+export default withStyles(styles)(AppVersions);

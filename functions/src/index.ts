@@ -19,7 +19,8 @@ app.post("/deployments", (request: any, response: any) => {
     .database()
     .ref(`repositories/${body.app}/environments/${body.env}`)
     .set({
-      version: body.version
+      version: body.version,
+      timestamp: admin.database.ServerValue.TIMESTAMP
     })
     .then(() => {
       response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);

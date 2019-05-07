@@ -55,7 +55,8 @@ class App extends Component {
           const environements = Object.keys(values[key].environments).map(
             environment => ({
               name: environment,
-              version: values[key].environments[environment].version
+              version: values[key].environments[environment].version,
+              timestamp: values[key].environments[environment].timestamp
             })
           );
           envs.push(...environements);
