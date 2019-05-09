@@ -56,7 +56,10 @@ app.post("/webhooks", async (request: any, response: any) => {
 async function updateBranch(body: any, ref: any) {
   const update = body.push.changes[0];
   const branch = update.new || update.old;
-  const branchName = branch.name.split("/").pop();
+  const branchName = branch.name
+    .split("/")
+    .pop()
+    .replace(".", "_");
   const branchRef = ref.child(`branches/${branchName}`);
 
   if (branch.type !== "branch") {
