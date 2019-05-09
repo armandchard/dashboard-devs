@@ -12,6 +12,7 @@ import { ExpandLess, ExpandMore, CallSplit } from "@material-ui/icons";
 
 const styles = theme => ({
   nested: {
+    paddingTop: 0,
     paddingLeft: theme.spacing.unit * 4
   },
   avatar: {

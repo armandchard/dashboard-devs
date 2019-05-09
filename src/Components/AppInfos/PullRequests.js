@@ -17,14 +17,15 @@ import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const styles = theme => ({
   nested: {
-    paddingLeft: theme.spacing.unit * 4
+    paddingTop: 0,
+    paddingLeft: theme.spacing.unit * 3
   },
   avatar: {
     height: "28px",
     width: "28px"
   },
   margin: {
-    margin: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit,
     color: "rgba(0, 0, 0, 0.54)"
   },
   textColor: {

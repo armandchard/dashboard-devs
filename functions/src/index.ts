@@ -59,7 +59,7 @@ async function updateBranch(body: any, ref: any) {
   const branchName = branch.name
     .split("/")
     .pop()
-    .replace(".", "_");
+    .replace(/\./g,'_');
   const branchRef = ref.child(`branches/${branchName}`);
 
   if (branch.type !== "branch") {

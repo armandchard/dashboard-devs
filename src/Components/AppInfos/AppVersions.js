@@ -5,6 +5,7 @@ import { ListItem, ListItemText } from "@material-ui/core";
 import moment from "moment";
 
 const styles = theme => ({
+  root: { paddingTop: 0, paddingBottom: 0 },
   flex: {
     display: "flex"
   }
@@ -35,7 +36,7 @@ class AppVersions extends React.Component {
     const { envs, classes } = this.props;
 
     return (
-      <ListItem>
+      <ListItem className={classes.root}>
         {!!envs
           ? envs.map(({ name, version, timestamp }) => (
               <ListItemText
