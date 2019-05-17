@@ -14,17 +14,34 @@ app.get("/deployments", (request: any, response: any) => {
 
 app.post("/deployments", (request: any, response: any) => {
   const { body } = request;
-
-  return admin
-    .database()
-    .ref(`repositories/${body.app}/environments/${body.env}`)
-    .set({
-      version: body.version,
-      timestamp: admin.database.ServerValue.TIMESTAMP
-    })
-    .then(() => {
-      response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
-    });
+  let version = body.version;
+  if (body.buildNumber) {
+    const key = body.version.replace(/\./g, "_");
+    return admin
+      .database()
+      .ref(`repositories/${body.app}/environments/${body.env}/versions/${key}`)
+      .set({
+        build_number: body.buildNumber,
+        name: body.env,
+        version: body.version,
+        timestamp: admin.database.ServerValue.TIMESTAMP
+      })
+      .then(() => {
+        response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
+      });
+  } else {
+    return admin
+      .database()
+      .ref(`repositories/${body.app}/environments/${body.env}`)
+      .set({
+        name: body.env,
+        version: version,
+        timestamp: admin.database.ServerValue.TIMESTAMP
+      })
+      .then(() => {
+        response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
+      });
+  }
 });
 
 app.post("/version", (request: any, response: any) => {
@@ -59,7 +76,7 @@ async function updateBranch(body: any, ref: any) {
   const branchName = branch.name
     .split("/")
     .pop()
-    .replace(/\./g,'_');
+    .replace(/\./g, "_");
   const branchRef = ref.child(`branches/${branchName}`);
 
   if (branch.type !== "branch") {

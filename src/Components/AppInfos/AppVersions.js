@@ -34,23 +34,36 @@ const styles = theme => ({
 class AppVersions extends React.Component {
   render() {
     const { envs, classes } = this.props;
-
+    console.log(envs);
     return (
       <ListItem className={classes.root}>
         {!!envs
-          ? envs.map(({ name, version, timestamp }) => (
+          ? envs.map(({ name, version, versions, timestamp }) => (
               <ListItemText
                 key={name}
                 primary={name}
                 secondary={
-                  <span>
-                    {version}
-                    {timestamp ? (
-                      <span className={classes.flex}>
-                        {moment(timestamp).fromNow(true)}
+                  versions ? (
+                    versions.map(env => (
+                      <span key={env.version}>
+                        {env.version}({env.build_number})
+                        {env.timestamp ? (
+                          <span className={classes.flex}>
+                            {moment(env.timestamp).fromNow(true)}
+                          </span>
+                        ) : null}
                       </span>
-                    ) : null}
-                  </span>
+                    ))
+                  ) : (
+                    <span>
+                      {version}
+                      {timestamp ? (
+                        <span className={classes.flex}>
+                          {moment(timestamp).fromNow(true)}
+                        </span>
+                      ) : null}
+                    </span>
+                  )
                 }
               />
             ))

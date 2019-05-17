@@ -17,6 +17,9 @@ const styles = theme => ({
   link: {
     textDecoration: "none"
   },
+  avatarLink: {
+    cursor: "pointer"
+  },
   title: {
     padding: "8px 16px 0",
     color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
@@ -63,10 +66,16 @@ class AppInfos extends React.Component {
     return hash.toString();
   }
 
+  onAvatarClick(url) {
+    if (url) {
+      window.open(url, "_blank");
+    }
+  }
+
   render() {
     const {
       classes,
-      app: { name, envs, branches, logo, pullRequests, url }
+      app: { name, envs, branches, logo, pullRequests, url, appCenterUrl }
     } = this.props;
 
     const prs = pullRequests
@@ -89,6 +98,8 @@ class AppInfos extends React.Component {
           className={classes.title}
           avatar={
             <Avatar
+              className={appCenterUrl ? classes.avatarLink : ""}
+              onClick={() => this.onAvatarClick(appCenterUrl)}
               aria-label={name}
               src={
                 logo

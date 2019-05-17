@@ -56,6 +56,9 @@ class App extends Component {
             environment => ({
               name: environment,
               version: values[key].environments[environment].version,
+              versions: values[key].environments[environment].versions
+                ? Object.values(values[key].environments[environment].versions)
+                : null,
               timestamp: values[key].environments[environment].timestamp
             })
           );
@@ -67,7 +70,8 @@ class App extends Component {
           branches,
           envs,
           logo: values[key].logo,
-          url: values[key].url
+          url: values[key].url,
+          appCenterUrl: values[key].app_center_url
         };
       });
       this.setState({
