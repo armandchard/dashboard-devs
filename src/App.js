@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+import logo from "./transparent.gif";
 import "./App.css";
 import * as firebase from "firebase";
 import AppInfos from "./Components/AppInfos/AppInfos";
@@ -8,6 +8,11 @@ import { withStyles } from "@material-ui/core/styles";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Badge from "@material-ui/core/Badge";
+import AcUnit from "@material-ui/icons/AcUnit";
+import Whatshot from "@material-ui/icons/Whatshot";
+import LocalDrink from "@material-ui/icons/LocalDrink";
 
 const { version: appVersion } = require("../package.json");
 
@@ -32,9 +37,23 @@ class App extends Component {
     };
   }
 
+  async componentWillMount() {
+    const versionRef = firebase.database().ref("version");
+
+    await versionRef.on("value", async snap => {
+      const version = snap.val();
+      if (version !== appVersion) {
+        // eslint-disable-next-line no-restricted-globals
+        setTimeout(() => {
+          window.location.reload();
+        }, 10000);
+      }
+    });
+  }
+
   componentDidMount() {
     const reposRef = firebase.database().ref("repositories");
-    const versionRef = firebase.database().ref("version");
+    const sensorsRef = firebase.database().ref("sensors");
 
     reposRef.on("value", snap => {
       const values = snap.val();
@@ -54,8 +73,11 @@ class App extends Component {
         if (values[key].environments) {
           const environements = Object.keys(values[key].environments).map(
             environment => ({
-              name: environment,
+              name: values[key].environments[environment].name || environment,
               version: values[key].environments[environment].version,
+              statusValue: values[key].environments[environment].status_value,
+              statusTimestamp:
+                values[key].environments[environment].status_timestamp,
               versions: values[key].environments[environment].versions
                 ? Object.values(values[key].environments[environment].versions)
                 : null,
@@ -79,18 +101,14 @@ class App extends Component {
       });
     });
 
-    versionRef.on("value", snap => {
-      const version = snap.val();
-      console.log(version, appVersion);
-      if (version !== appVersion) {
-        // eslint-disable-next-line no-restricted-globals
-        location.reload(true);
-      }
+    sensorsRef.on("value", snap => {
+      const sensors = snap.val();
+      this.setState({ ...this.state, ...sensors });
     });
   }
 
   render() {
-    const { repos } = this.state;
+    const { repos, humidity, temperature } = this.state;
     const { classes } = this.props;
 
     if (repos && repos.length > 0) {
@@ -98,14 +116,25 @@ class App extends Component {
         <div className="App">
           <AppBar position="static" color="primary">
             <Toolbar>
-              {/* <IconButton
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="Menu"
-              >
-                <MenuIcon />
-              </IconButton> */}
               <h1 className={classes.grow}>Dashboard Devs Pumpkin</h1>
+              <IconButton color="inherit">
+                <Badge
+                  className="badge"
+                  badgeContent={`${temperature}°`}
+                  color="secondary"
+                >
+                  {temperature > 19 ? <Whatshot /> : <AcUnit />}
+                </Badge>
+              </IconButton>
+              <IconButton color="inherit">
+                <Badge
+                  className="badge"
+                  badgeContent={`${humidity}%`}
+                  color="secondary"
+                >
+                  <LocalDrink />
+                </Badge>
+              </IconButton>
             </Toolbar>
           </AppBar>
           <div className="App-body">

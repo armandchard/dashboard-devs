@@ -5,6 +5,34 @@ const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
 const app = express();
 
+app.post("/sensors", (request: any, response: any) => {
+  const sensorRef = admin.database().ref("sensors");
+  const { body } = request;
+
+  return sensorRef
+    .set({
+      temperature: body.temperature,
+      humidity: body.humidity
+    })
+    .then(() => {
+      response.status(200).send(`OK ${body.temperature} ${body.humidity}`);
+    });
+});
+
+app.post("/sensors", (request: any, response: any) => {
+  const sensorRef = admin.database().ref("sensors");
+  const { body } = request;
+
+  return sensorRef
+    .set({
+      temperature: body.temperature,
+      humidity: body.humidity
+    })
+    .then(() => {
+      response.status(200).send(`OK ${body.temperature} ${body.humidity}`);
+    });
+});
+
 app.get("/deployments", (request: any, response: any) => {
   const deploymentsRef = admin.database().ref("deployments");
   deploymentsRef.on("value", (snapshot: any) => {
@@ -12,35 +40,98 @@ app.get("/deployments", (request: any, response: any) => {
   });
 });
 
-app.post("/deployments", (request: any, response: any) => {
+app.get("/status_url", async (request: any, response: any) => {
+  const repoRef = admin.database().ref("repositories");
+  const repoSnap = await repoRef.once("value");
+  const values = Object.assign({}, repoSnap.val());
+
+  const map = values
+    ? Object.keys(values)
+        .map(key => {
+          let envs = [];
+          if (values[key].environments) {
+            const environements = Object.keys(values[key].environments).map(
+              environment => ({
+                environment,
+                repository: key,
+                status_url: values[key].environments[environment].status_url,
+                status: values[key].environments[environment].status_value
+              })
+            );
+            envs.push(...environements);
+          }
+          return envs.filter(env => env.status_url);
+        })
+        .filter(env => env && env.length > 0)
+    : [];
+
+  let mergedTab: any = [];
+  map.forEach(t => {
+    t.forEach(e => {
+      mergedTab.push(e);
+    });
+  });
+  response.status(200).send(mergedTab);
+});
+
+app.post("/status_url", async (request: any, response: any) => {
   const { body } = request;
+  const statusRef = admin
+    .database()
+    .ref(`repositories/${body.repository}/environments/${body.environment}`);
+  const envSnapshot = await statusRef.once("value");
+  const value = Object.assign({}, envSnapshot.val());
+  await statusRef.set({
+    ...value,
+    status_value: body.status,
+    status_timestamp: admin.database.ServerValue.TIMESTAMP
+  });
+  response.status(200).send(body.status);
+});
+
+app.post("/deployments", async (request: any, response: any) => {
+  const { body } = request;
+  const envRef = admin
+    .database()
+    .ref(`repositories/${body.app}/environments/${body.env}`);
   let version = body.version;
+
   if (body.buildNumber) {
     const key = body.version.replace(/\./g, "_");
-    return admin
+    const envSnapshot = await envRef.once("value");
+    const value = Object.assign({}, envSnapshot.val());
+    if (value && !value.name) {
+      await envRef.set({ name: body.env });
+    }
+    await admin
       .database()
       .ref(`repositories/${body.app}/environments/${body.env}/versions/${key}`)
       .set({
         build_number: body.buildNumber,
-        name: body.env,
         version: body.version,
         timestamp: admin.database.ServerValue.TIMESTAMP
-      })
-      .then(() => {
-        response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
       });
+    return response
+      .status(200)
+      .send(`OK ${body.app} ${body.version} ${body.env}`);
   } else {
-    return admin
+    const snapshot = await admin
+      .database()
+      .ref(`repositories/${body.app}/environments/${body.env}`)
+      .once("value");
+    const value = Object.assign({}, snapshot.val());
+    await admin
       .database()
       .ref(`repositories/${body.app}/environments/${body.env}`)
       .set({
+        ...value,
         name: body.env,
         version: version,
         timestamp: admin.database.ServerValue.TIMESTAMP
-      })
-      .then(() => {
-        response.status(200).send(`OK ${body.app} ${body.version} ${body.env}`);
       });
+    return response
+      .status(200)
+      .send(`OK ${body.app} ${body.version} ${body.env}`);
   }
 });
 

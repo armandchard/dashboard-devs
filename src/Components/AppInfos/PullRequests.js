@@ -37,7 +37,7 @@ class PullRequests extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: true
+      open: false
     };
     this.onPrClick = this.onPrClick.bind(this);
   }

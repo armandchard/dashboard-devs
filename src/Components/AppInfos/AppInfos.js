@@ -23,6 +23,9 @@ const styles = theme => ({
   title: {
     padding: "8px 16px 0",
     color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
+  },
+  list: {
+    paddingTop: 0
   }
 });
 
@@ -111,7 +114,7 @@ class AppInfos extends React.Component {
             />
           }
         />
-        <List>
+        <List className={classes.list}>
           <AppVersions envs={envs} />
           <AppBranches branches={branches} />
           {!!prs && prs.length > 0 ? <PullRequests pullRequests={prs} /> : null}
