@@ -21,7 +21,19 @@
         "function": "app"
       },
       {
+        "source": "/sensors",
+        "function": "app"
+      },
+      {
         "source": "/webhooks",
+        "function": "app"
+      },
+      {
+        "source": "/status_url",
+        "function": "app"
+      },
+      {
+        "source": "/status_url/list",
         "function": "app"
       }
     ]

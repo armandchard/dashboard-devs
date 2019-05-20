@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+![Image of Dashboard](https://firebasestorage.googleapis.com/v0/b/dashboard-devs.appspot.com/o/assets%2FCapture%20d%E2%80%99e%CC%81cran%202019-06-07%20a%CC%80%2011.24.09.png?alt=media&token=006bf712-37a7-40ed-a021-ad5dec0e65c5)
+
 ## Available Scripts
 
 In the project directory, you can run:
