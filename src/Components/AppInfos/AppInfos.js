@@ -8,10 +8,13 @@ import AppBranches from "./AppBranches";
 
 const styles = theme => ({
   root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
     margin: "5px",
+    minWidth: 300,
+    maxWidth: 400,
+    backgroundColor: theme.palette.background.paper,
     overflowX: "auto"
   },
   link: {

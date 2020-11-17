@@ -105,7 +105,7 @@ class AppRepos extends Component {
           <AppBar position="static" color="primary">
             <Toolbar>
               <h1 className={classes.grow}>Dashboard Devs Pumpkin</h1>
-              <IconButton color="inherit">
+              {/* <IconButton color="inherit">
                 <Badge
                   className="badge"
                   badgeContent={`${temperature}°`}
@@ -122,7 +122,7 @@ class AppRepos extends Component {
                 >
                   <LocalDrink />
                 </Badge>
-              </IconButton>
+              </IconButton> */}
             </Toolbar>
           </AppBar>
           <div className="App-body">
