@@ -2,11 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Card, CardHeader, List, Avatar } from "@material-ui/core";
-import PullRequests from "./PullRequests";
 import AppVersions from "./AppVersions";
-import AppBranches from "./AppBranches";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: "flex",
     flex: 1,
@@ -15,21 +13,21 @@ const styles = theme => ({
     minWidth: 300,
     maxWidth: 400,
     backgroundColor: theme.palette.background.paper,
-    overflowX: "auto"
+    overflowX: "auto",
   },
   link: {
-    textDecoration: "none"
+    textDecoration: "none",
   },
   avatarLink: {
-    cursor: "pointer"
+    cursor: "pointer",
   },
   title: {
     padding: "8px 16px 0",
-    color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
+    color: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
   },
   list: {
-    paddingTop: 0
-  }
+    paddingTop: 0,
+  },
 });
 
 export const colorsDefinition = {
@@ -42,7 +40,7 @@ export const colorsDefinition = {
   "#adbac5": "#EE38AA", // bluey-gray-two
   "#bbcad2": "#EE38AA", // cloudy-blue
   "#11C0D8": "#EE38AA", // light-blue-gray
-  "#EE38AA": "#11C0D8" // gray 300
+  "#EE38AA": "#11C0D8", // gray 300
 };
 
 class AppInfos extends React.Component {
@@ -81,11 +79,11 @@ class AppInfos extends React.Component {
   render() {
     const {
       classes,
-      app: { name, envs, branches, logo, pullRequests, url, appCenterUrl }
+      app: { name, envs, logo, pullRequests, url, appCenterUrl },
     } = this.props;
 
     const prs = pullRequests
-      ? pullRequests.filter(pr => !pr.title.startsWith("[WIP]"))
+      ? pullRequests.filter((pr) => !pr.title.startsWith("[WIP]"))
       : [];
 
     return (
@@ -119,8 +117,6 @@ class AppInfos extends React.Component {
         />
         <List className={classes.list}>
           <AppVersions envs={envs} />
-          {/* <AppBranches branches={branches} /> */}
-          {/* {!!prs && prs.length > 0 ? <PullRequests pullRequests={prs} /> : null} */}
         </List>
       </Card>
     );
@@ -129,7 +125,7 @@ class AppInfos extends React.Component {
 
 AppInfos.propTypes = {
   classes: PropTypes.object.isRequired,
-  app: PropTypes.object.isRequired
+  app: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(AppInfos);
